@@ -1,8 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import Login from './Pages/Login';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Login from './pages/Login';
 import styled from 'styled-components';
-import Header from './Layouts/Header';
+import Header from './layouts/Header';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
 
 const Wrapper = styled.div`
   max-width: 1200px;
@@ -13,12 +15,14 @@ const Wrapper = styled.div`
 `
 const StyledMain = styled.main`
   flex-grow: 1;
+  padding: 0 20px;
 `
 
 let routes = (
   <Switch>
     <Route path="/login" component={Login} />
-    <Route path="/" exact component={Login} />
+    <Route path="/signup" component={Signup} />
+    <Route path="/" exact component={Dashboard} />
   </Switch>
 );
 

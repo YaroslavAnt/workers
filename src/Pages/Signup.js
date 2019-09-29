@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 
 
 import styled from 'styled-components';
-import { login } from '../store/user/actions';
+import { signup } from '../store/user/actions';
 
 const Page = styled.div`
     display: flex;
@@ -34,7 +34,7 @@ const styles = {
 
 
 
-class Login extends React.Component {
+class Signup extends React.Component {
   state = {}
   onChangeHandler = ({ target: { name, value } }) => {
     this.setState({
@@ -43,7 +43,7 @@ class Login extends React.Component {
   }
   onSubmitHandler = (e) => {
     e.preventDefault();
-    console.log('submit')
+    console.log('submit');
     this.props.onSubmit(this.state);
   }
   render() {
@@ -52,8 +52,16 @@ class Login extends React.Component {
     return (
       <Page>
         <Card className={classes.card}>
-          <Typography variant="h5" component="h2">Login to Workers App</Typography>
+          <Typography variant="h5" component="h2">Register to Workers App</Typography>
           <Form onSubmit={this.onSubmitHandler}>
+            <TextField
+              name='name'
+              type='text'
+              label="Name"
+              variant='outlined'
+              margin="normal"
+              onChange={this.onChangeHandler}
+            />
             <TextField
               name='email'
               type='email'
@@ -71,7 +79,7 @@ class Login extends React.Component {
               onChange={this.onChangeHandler}
             />
             <Button type='submit' variant='contained' color='secondary' className={classes.button}>Submit</Button>
-            <Typography className='flexbox align-center justify-right pt-20'>Have no account?<Link to='/signup'><Button variant='text'>SignUp</Button></Link></Typography>
+            <Typography className='flexbox align-center justify-right pt-20'>Have an account?<Link to='/login'><Button variant='text'>SignUp</Button></Link></Typography>
           </Form>
         </Card>
       </Page>
@@ -85,8 +93,7 @@ const mapStateToProps = () => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSubmit: (user) => dispatch(login(user)),
+    onSubmit: (user) => dispatch(signup(user)),
   };
 };
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Signup));
