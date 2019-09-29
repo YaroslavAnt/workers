@@ -8,9 +8,9 @@ export const getAll = (user) => {
         axios
             .get(`${url}`, user)
             .then(response => {
-                // const { data: { msg, user } } = response
+                const { data: { employees } } = response
                 console.log(response);
-                dispatch(getAllSuccess(user._id))
+                dispatch(getAllSuccess(employees))
             })
             .catch(err => {
                 dispatch(fail(err.message));
@@ -36,7 +36,7 @@ export const create = (employee) => {
                 console.log({ res })
                 // const { token, _id } = res.data;
                 // dispatch(createSuccess(token, _id));
-                dispatch(getAllSuccess())
+                // dispatch(getAllSuccess())
             })
             .catch(err => {
                 console.log({ err })
@@ -55,13 +55,14 @@ export const createSuccess = (token) => {
 
 export const update = (newData, employeeId) => {
     return dispatch => {
+        console.log(employeeId)
         axios
             .put(`${url}/${employeeId}`, newData)
             .then(res => {
                 console.log({ res })
                 // const { token, _id } = res.data;
                 // dispatch(createSuccess(token, _id));
-                dispatch(getAllSuccess())
+                // dispatch(getAllSuccess())
             })
             .catch(err => {
                 console.log({ err })
@@ -80,12 +81,12 @@ export const updateSuccess = (message) => {
 export const deleteEmployee = (employeeId) => {
     return dispatch => {
         axios
-            .put(`${url}/${employeeId}`)
+            .delete(`${url}/${employeeId}`)
             .then(res => {
                 console.log({ res })
                 // const { token, _id } = res.data;
                 // dispatch(createSuccess(token, _id));
-                dispatch(getAllSuccess())
+                // dispatch(getAllSuccess())
             })
             .catch(err => {
                 console.log({ err })

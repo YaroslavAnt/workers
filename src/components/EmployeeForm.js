@@ -5,7 +5,7 @@ const styles = {
   form: {
     display: 'flex',
     flexDirection: 'column',
-    width: 240,
+    width: 340,
     padding: 20
   },
   button: {
@@ -17,8 +17,12 @@ const EmployeeForm = ({
   classes,
   onSubmitHandler,
   onChangeHandler,
-  user: {
-    gender
+  employee: {
+    name,
+    gender,
+    salary,
+    contacts,
+    position
   }
 }) => {
   return (
@@ -27,6 +31,7 @@ const EmployeeForm = ({
 
       <TextField
         name='name'
+        value={name}
         type='text'
         label="Name"
         variant='outlined'
@@ -46,23 +51,36 @@ const EmployeeForm = ({
             id: 'outlined-gender-simple',
           }}
         >
-
           <MenuItem value={'Male'}>Male</MenuItem>
           <MenuItem value={'Female'}>Female</MenuItem>
         </Select>
       </FormControl>
+
       <TextField
-        name='email'
-        type='email'
-        label="E-mail"
+        name='contacts'
+        value={contacts}
+        type='text'
+        label="Contacts"
         variant='outlined'
         margin="normal"
         onChange={onChangeHandler}
       />
+
       <TextField
-        name='password'
-        type='password'
-        label="Password"
+        name='salary'
+        value={salary}
+        type='text'
+        label="Salary"
+        variant='outlined'
+        margin="normal"
+        onChange={onChangeHandler}
+      />
+
+      <TextField
+        name='position'
+        value={position}
+        type='text'
+        label="Position"
         variant='outlined'
         margin="normal"
         onChange={onChangeHandler}

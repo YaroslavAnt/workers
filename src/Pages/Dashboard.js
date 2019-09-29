@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from "react-redux";
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,9 +8,12 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/styles';
-import { Button, Dialog, Typography } from '@material-ui/core';
-import { getAll } from '../store/employee/actions';
+import { Button, Dialog, Typography, TableHead, Fab } from '@material-ui/core';
+import { getAll, create, update, deleteEmployee } from '../store/employees/actions';
 import EmployeeForm from '../components/EmployeeForm'
+import moment from 'moment';
+import Icon from '@material-ui/core/Icon';
+
 
 const styles = {
   root: {
@@ -29,26 +31,13 @@ const styles = {
   },
   dialog: {
     padding: 20
+  },
+  fab: {
+    width: 36,
+    height: 36,
+    margin: '0 4px'
   }
 }
-const createData = (name, calories, fat) => {
-  return { name, calories, fat };
-}
-const rows = [
-  createData('Cupcake', 305, 3.7),
-  createData('Donut', 452, 25.0),
-  createData('Eclair', 262, 16.0),
-  createData('Frozen yoghurt', 159, 6.0),
-  createData('Gingerbread', 356, 16.0),
-  createData('Honeycomb', 408, 3.2),
-  createData('Ice cream sandwich', 237, 9.0),
-  createData('Jelly Bean', 375, 0.0),
-  createData('KitKat', 518, 26.0),
-  createData('Lollipop', 392, 0.2),
-  createData('Marshmallow', 318, 0),
-  createData('Nougat', 360, 19.0),
-  createData('Oreo', 437, 18.0),
-].sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
 class Dashboard extends React.Component {
   state = {
@@ -56,9 +45,8 @@ class Dashboard extends React.Component {
     rowsPerPage: 5,
     openAdd: false,
     openUpdate: false,
-    user: {
-
-    }
+    openDelete: false,
+    employee: {}
   }
 
   componentDidMount() {
@@ -67,8 +55,8 @@ class Dashboard extends React.Component {
 
   onChangeHandler = ({ target: { name, value } }) => {
     this.setState({
-      user: {
-        ...this.state.user,
+      employee: {
+        ...this.state.employee,
         [name]: value
       }
     })
@@ -93,30 +81,80 @@ class Dashboard extends React.Component {
     })
   }
 
-  toggleOpenUpdate = () => {
+  toggleOpenUpdate = (employeeId) => {
     this.setState({
-      openUpdate: !this.state.openUpdate
+      openUpdate: !this.state.openUpdate,
+      employee: this.props.employees.find(el => el._id === employeeId) || {}
     })
   }
 
+  toggleOpenDelete = (employeeId) => {
+    this.setState({
+      openDelete: !this.state.openDelete,
+      employee: this.props.employees.find(el => el._id === employeeId) || {}
+    })
+  }
+
+  addEmployee = (e) => {
+    e.preventDefault();
+    this.props.create({ ...this.state.employee, published_date: Date.now() });
+    this.toggleOpenAdd();
+  }
+
+  updateEmployee = (e) => {
+    const { employee } = this.state;
+    e.preventDefault();
+    this.props.update({ ...employee, published_date: Date.now() }, employee._id);
+    this.toggleOpenUpdate()
+  }
+
+  deleteEmployee = (e) => {
+    const { employee } = this.state;
+    e.preventDefault();
+    this.props.delete(employee._id);
+    this.toggleOpenDelete()
+  }
+
   render() {
-    const { classes } = this.props;
-    const { page, rowsPerPage, openAdd, user } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const { classes, employees } = this.props;
+    const { page, rowsPerPage, openAdd, openUpdate, openDelete, employee } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, employees.length - page * rowsPerPage);
     console.log(this.state)
+    console.log(employees)
     return (
       <>
         <Paper className={classes.root}>
           <div className={classes.tableWrapper}>
             <Table className={classes.table}>
+              <TableHead >
+                <TableRow>
+                  <TableCell component='th' align="left">Name</TableCell>
+                  <TableCell component='th' align="right">Position</TableCell>
+                  <TableCell component='th' align="right">Gender</TableCell>
+                  <TableCell component='th' align="right">Contacts</TableCell>
+                  <TableCell component='th' align="right">From</TableCell>
+                  <TableCell component='th' align="right">Salary</TableCell>
+                  <TableCell component='th' align="right">Controlls</TableCell>
+                </TableRow>
+              </TableHead>
+
               <TableBody>
-                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                  <TableRow key={row.name}>
-                    <TableCell component="th" scope="row">
-                      {row.name}
+                {employees && employees.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(employee => (
+                  <TableRow key={employee._id}>
+                    <TableCell component='td' align="left">{employee.name}</TableCell>
+                    <TableCell component='td' align="right">{employee.position}</TableCell>
+                    <TableCell component='td' align="right">{employee.gender}</TableCell>
+                    <TableCell component='td' align="right">{employee.contacts}</TableCell>
+                    <TableCell component='td' align="right">{moment(employee.published_date).format('DD-MM-YY')}</TableCell>
+                    <TableCell component='td' align="right">{employee.salary}</TableCell>
+                    <TableCell component='td' align="right">
+                      <Fab color="primary" aria-label="edit" className={classes.fab} onClick={() => this.toggleOpenUpdate(employee._id)}>
+                        <Icon>edit</Icon>
+                      </Fab>
+                      <Fab color="secondary" aria-label="delete" className={classes.fab} onClick={() => this.toggleOpenDelete(employee._id)}>
+                        <Icon>delete</Icon>
+                      </Fab>
                     </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
-                    <TableCell align="right">{row.fat}</TableCell>
                   </TableRow>
                 ))}
                 {emptyRows > 0 && (
@@ -130,7 +168,7 @@ class Dashboard extends React.Component {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     colSpan={3}
-                    count={rows.length}
+                    count={employees.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{
@@ -146,25 +184,45 @@ class Dashboard extends React.Component {
           </div>
         </Paper>
         <Button variant='contained' color='primary' onClick={this.toggleOpenAdd}>Add Employee*</Button>
+
         <Dialog onClose={this.toggleOpenAdd} open={openAdd} className={classes.dialog}>
           <EmployeeForm
-            user={user}
-            onSubmitHandler={this.addEmplyee}
+            employee={employee}
+            onSubmitHandler={this.addEmployee}
             onChangeHandler={this.onChangeHandler}
           />
         </Dialog>
+
+        <Dialog onClose={this.toggleOpenUpdate} open={openUpdate} className={classes.dialog}>
+          <EmployeeForm
+            employee={employee}
+            onSubmitHandler={this.updateEmployee}
+            onChangeHandler={this.onChangeHandler}
+          />
+        </Dialog>
+
+        <Dialog onClose={this.toggleOpenDelete} open={openDelete} className={classes.dialog}>
+          <Typography>Confirm delete {employee.name}</Typography>
+          <Button variant='contained' color='secondary' onClick={this.deleteEmployee}>Delete </Button>
+        </Dialog>
+
       </>
     );
   }
 }
 
-const mapStateToProps = () => {
-  return {}
+const mapStateToProps = (state) => {
+  return {
+    employees: state.employees.employees
+  }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     getAll: () => dispatch(getAll()),
+    create: (employee) => dispatch(create(employee)),
+    update: (employee, employeeId) => dispatch(update(employee, employeeId)),
+    delete: (employeeId) => dispatch(deleteEmployee(employeeId))
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard));
