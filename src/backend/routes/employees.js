@@ -29,7 +29,7 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   Employee.findByIdAndRemove(req.params.id, req.body)
-    .then(employee => res.json({ mgs: 'Deleted successfully' }))
+    .then(employee => res.json({ msg: 'Deleted successfully' }))
     .catch(err => res.status(404).json({ error: 'No such a employee' }));
 });
 

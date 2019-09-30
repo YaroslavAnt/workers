@@ -8,9 +8,9 @@ export const signup = (user) => {
         axios
             .post(`${url}/signup`, user)
             .then(response => {
-                const { data: { msg, user } } = response
+                const { data: { msg } } = response
                 console.log(response);
-                dispatch(signupSuccess(user._id))
+                dispatch(signupSuccess(msg))
             })
             .catch(err => {
                 dispatch(authFail(err.message));
@@ -18,10 +18,10 @@ export const signup = (user) => {
     }
 }
 
-export const signupSuccess = (userId) => {
+export const signupSuccess = (message) => {
     return {
         type: actionTypes.SIGNUP,
-        userId
+        message
     };
 };
 
@@ -51,9 +51,15 @@ export const loginSuccess = (token) => {
     };
 };
 
-export const authFail = (err) => {
+export const authFail = (message) => {
     return {
         type: actionTypes.AUTH_FAIL,
-        err
+        message
+    };
+};
+
+export const confirmMsg = () => {
+    return {
+        type: actionTypes.CONFIRM_MSG,
     };
 };

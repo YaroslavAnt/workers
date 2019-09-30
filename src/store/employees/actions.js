@@ -13,20 +13,10 @@ export const getAll = (user) => {
                 dispatch(getAllSuccess(employees))
             })
             .catch(err => {
-                dispatch(fail(err.message));
+                dispatch(receiveMessage(err.message));
             });
     }
 }
-
-export const getAllSuccess = (employees) => {
-    return {
-        type: actionTypes.GET_ALL,
-        employees
-    };
-};
-
-
-
 
 export const create = (employee) => {
     return dispatch => {
@@ -34,24 +24,15 @@ export const create = (employee) => {
             .post(`${url}`, employee)
             .then(res => {
                 console.log({ res })
-                // const { token, _id } = res.data;
-                // dispatch(createSuccess(token, _id));
-                // dispatch(getAllSuccess())
+                const { data: { msg } } = res;
+                dispatch(receiveMessage(msg));
             })
             .catch(err => {
                 console.log({ err })
-                dispatch(fail(err.message));
+                dispatch(receiveMessage(err.message));
             });
     };
 };
-
-export const createSuccess = (token) => {
-    return {
-        type: actionTypes.CREATE,
-        token,
-    };
-};
-
 
 export const update = (newData, employeeId) => {
     return dispatch => {
@@ -60,21 +41,13 @@ export const update = (newData, employeeId) => {
             .put(`${url}/${employeeId}`, newData)
             .then(res => {
                 console.log({ res })
-                // const { token, _id } = res.data;
-                // dispatch(createSuccess(token, _id));
-                // dispatch(getAllSuccess())
+                const { msg } = res.data;
+                dispatch(receiveMessage(msg));
             })
             .catch(err => {
                 console.log({ err })
-                dispatch(fail(err.message));
+                dispatch(receiveMessage(err.message));
             });
-    };
-};
-
-export const updateSuccess = (message) => {
-    return {
-        type: actionTypes.UPDATE,
-        message,
     };
 };
 
@@ -84,27 +57,34 @@ export const deleteEmployee = (employeeId) => {
             .delete(`${url}/${employeeId}`)
             .then(res => {
                 console.log({ res })
-                // const { token, _id } = res.data;
-                // dispatch(createSuccess(token, _id));
-                // dispatch(getAllSuccess())
+                const { msg } = res.data;
+                dispatch(receiveMessage(msg));
             })
             .catch(err => {
                 console.log({ err })
-                dispatch(fail(err.message));
+                dispatch(receiveMessage(err.message));
             });
     };
 };
 
-export const deleteSuccess = (message) => {
+
+
+export const getAllSuccess = (employees) => {
     return {
-        type: actionTypes.DELETE,
+        type: actionTypes.GET_ALL,
+        employees
+    };
+};
+
+export const receiveMessage = (message) => {
+    return {
+        type: actionTypes.RECEIVE_MSG,
         message,
     };
 };
 
-export const fail = (err) => {
+export const confirmMsg = () => {
     return {
-        type: actionTypes.FAIL,
-        err
-    };
-};
+        type: actionTypes.CONFIRM_MSG
+    }
+}

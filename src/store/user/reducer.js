@@ -1,9 +1,8 @@
 import * as actionTypes from "./types";
 
 const initialState = {
-    userId: '',
     token: '',
-    errMessage: ''
+    message: ''
 };
 
 export default (state = initialState, action) => {
@@ -12,7 +11,7 @@ export default (state = initialState, action) => {
         case actionTypes.SIGNUP:
             return {
                 ...state,
-                userId: action.userId
+                message: action.message
             };
 
 
@@ -25,13 +24,19 @@ export default (state = initialState, action) => {
         case actionTypes.AUTH_FAIL:
             return {
                 ...state,
-                errMessage: action.errMessage
+                message: action.message
             };
 
         case actionTypes.AUTH_LOGOUT:
             return {
                 token: '',
-                errMessage: ''
+                message: ''
+            };
+
+        case actionTypes.CONFIRM_MSG:
+            return {
+                ...state,
+                message: ''
             };
 
         default:

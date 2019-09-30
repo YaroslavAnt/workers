@@ -5,12 +5,16 @@ import { Link } from "react-router-dom";
 
 
 const StyledHeader = styled.header`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     background-color: #333;
     color: #fff;
-    padding: 0 20px;
+    `
+const Container = styled.div`
+padding: 0 20px;
+display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin:0 auto;
 `
 const Logotext = styled.p`
     font-size: 24px;
@@ -19,10 +23,12 @@ const Logotext = styled.p`
 const Header = () => {
     return (
         <StyledHeader>
-            <Logotext>Workers</Logotext>
-            <Link to='/login'>
-                <Button variant='contained' color='secondary'>Login</Button>
-            </Link>
+            <Container>
+                <Logotext>Workers</Logotext>
+                <Link to='/login'>
+                    <Button variant='contained' color='secondary'>Login</Button>
+                </Link>
+            </Container>
         </StyledHeader>
     );
 }

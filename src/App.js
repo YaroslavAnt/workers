@@ -7,15 +7,16 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 
 const Wrapper = styled.div`
-  max-width: 1200px;
   min-height: 100vh;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
 `
 const StyledMain = styled.main`
   flex-grow: 1;
   padding: 0 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
 `
 
 let routes = (

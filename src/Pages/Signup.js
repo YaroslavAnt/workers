@@ -1,12 +1,12 @@
 import React from 'react';
 import Card from '@material-ui/core/Card';
-import { Typography, withStyles, TextField, Button } from '@material-ui/core';
+import { Typography, withStyles, TextField, Button, Dialog, Paper } from '@material-ui/core';
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 
 
 import styled from 'styled-components';
-import { signup } from '../store/user/actions';
+import { signup, confirmMsg } from '../store/user/actions';
 
 const Page = styled.div`
     display: flex;
@@ -29,6 +29,13 @@ const styles = {
   },
   button: {
     margin: '20px 0 0'
+  },
+  dialog: {
+    padding: 20,
+    width: 400
+  },
+  mt20: {
+    marginTop: 20
   }
 }
 
@@ -46,9 +53,14 @@ class Signup extends React.Component {
     console.log('submit');
     this.props.onSubmit(this.state);
   }
+  confirmMsg = () => {
+    this.props.confirmMsg();
+  }
   render() {
     const { classes } = this.props;
-    console.log(this.state)
+    const { user: { message } } = this.props;
+
+    console.log(this.props)
     return (
       <Page>
         <Card className={classes.card}>
@@ -82,18 +94,28 @@ class Signup extends React.Component {
             <Typography className='flexbox align-center justify-right pt-20'>Have an account?<Link to='/login'><Button variant='text'>SignUp</Button></Link></Typography>
           </Form>
         </Card>
+
+        <Dialog onClose={this.confirmMsg} open={message} >
+          <Paper className={classes.dialog}>
+            <Typography variant='h4' >{message}</Typography>
+            <Button variant='contained' color='secondary' className={classes.mt20} onClick={this.confirmMsg}>Close </Button>
+          </Paper>
+        </Dialog>
       </Page>
     );
   }
 }
 
-const mapStateToProps = () => {
-  return {}
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     onSubmit: (user) => dispatch(signup(user)),
+    confirmMsg: () => dispatch(confirmMsg())
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Signup));

@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/styles';
 import { Button, Dialog, Typography, TableHead, Fab } from '@material-ui/core';
-import { getAll, create, update, deleteEmployee } from '../store/employees/actions';
+import { getAll, create, update, deleteEmployee, confirmMsg } from '../store/employees/actions';
 import EmployeeForm from '../components/EmployeeForm'
 import moment from 'moment';
 import Icon from '@material-ui/core/Icon';
@@ -30,12 +30,16 @@ const styles = {
     width: '100%',
   },
   dialog: {
-    padding: 20
+    padding: 20,
+    width: 400
   },
   fab: {
     width: 36,
     height: 36,
     margin: '0 4px'
+  },
+  mt20: {
+    marginTop: 20
   }
 }
 
@@ -52,6 +56,8 @@ class Dashboard extends React.Component {
   componentDidMount() {
     this.props.getAll()
   }
+
+
 
   onChangeHandler = ({ target: { name, value } }) => {
     this.setState({
@@ -82,16 +88,19 @@ class Dashboard extends React.Component {
   }
 
   toggleOpenUpdate = (employeeId) => {
+    const { employees: { employees } } = this.props;
     this.setState({
       openUpdate: !this.state.openUpdate,
-      employee: this.props.employees.find(el => el._id === employeeId) || {}
+      employee: employees.find(el => el._id === employeeId) || {}
     })
   }
 
   toggleOpenDelete = (employeeId) => {
+    const { employees: { employees } } = this.props;
+
     this.setState({
       openDelete: !this.state.openDelete,
-      employee: this.props.employees.find(el => el._id === employeeId) || {}
+      employee: employees.find(el => el._id === employeeId) || {}
     })
   }
 
@@ -115,12 +124,16 @@ class Dashboard extends React.Component {
     this.toggleOpenDelete()
   }
 
+  confirmMsg = () => {
+    this.props.confirmMsg();
+    document.location.reload()
+  }
+
   render() {
-    const { classes, employees } = this.props;
+    const { classes, employees: { employees, message }, confirmMsg } = this.props;
     const { page, rowsPerPage, openAdd, openUpdate, openDelete, employee } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, employees.length - page * rowsPerPage);
-    console.log(this.state)
-    console.log(employees)
+
     return (
       <>
         <Paper className={classes.root}>
@@ -185,7 +198,7 @@ class Dashboard extends React.Component {
         </Paper>
         <Button variant='contained' color='primary' onClick={this.toggleOpenAdd}>Add Employee*</Button>
 
-        <Dialog onClose={this.toggleOpenAdd} open={openAdd} className={classes.dialog}>
+        <Dialog onClose={this.toggleOpenAdd} open={openAdd} >
           <EmployeeForm
             employee={employee}
             onSubmitHandler={this.addEmployee}
@@ -193,7 +206,7 @@ class Dashboard extends React.Component {
           />
         </Dialog>
 
-        <Dialog onClose={this.toggleOpenUpdate} open={openUpdate} className={classes.dialog}>
+        <Dialog onClose={this.toggleOpenUpdate} open={openUpdate} >
           <EmployeeForm
             employee={employee}
             onSubmitHandler={this.updateEmployee}
@@ -201,9 +214,18 @@ class Dashboard extends React.Component {
           />
         </Dialog>
 
-        <Dialog onClose={this.toggleOpenDelete} open={openDelete} className={classes.dialog}>
-          <Typography>Confirm delete {employee.name}</Typography>
-          <Button variant='contained' color='secondary' onClick={this.deleteEmployee}>Delete </Button>
+        <Dialog onClose={this.toggleOpenDelete} open={openDelete} >
+          <Paper className={classes.dialog}>
+            <Typography variant='h4'>Confirm delete {employee.name}</Typography>
+            <Button variant='contained' color='secondary' className={classes.mt20} onClick={this.deleteEmployee}>Delete </Button>
+          </Paper>
+        </Dialog>
+
+        <Dialog onClose={this.confirmMsg} open={message} >
+          <Paper className={classes.dialog}>
+            <Typography variant='h4' >{message}</Typography>
+            <Button variant='contained' color='secondary' className={classes.mt20} onClick={this.confirmMsg}>Close </Button>
+          </Paper>
         </Dialog>
 
       </>
@@ -213,7 +235,7 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    employees: state.employees.employees
+    employees: state.employees
   }
 }
 
@@ -222,7 +244,8 @@ const mapDispatchToProps = dispatch => {
     getAll: () => dispatch(getAll()),
     create: (employee) => dispatch(create(employee)),
     update: (employee, employeeId) => dispatch(update(employee, employeeId)),
-    delete: (employeeId) => dispatch(deleteEmployee(employeeId))
+    delete: (employeeId) => dispatch(deleteEmployee(employeeId)),
+    confirmMsg: () => dispatch(confirmMsg()),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard));

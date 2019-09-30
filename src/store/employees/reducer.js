@@ -14,23 +14,16 @@ export default (state = initialState, action) => {
         employees: action.employees
       };
 
-
-    case actionTypes.CREATE:
+    case actionTypes.RECEIVE_MSG:
       return {
         ...state,
         message: action.message
       };
 
-    case actionTypes.UPDATE:
+    case actionTypes.CONFIRM_MSG:
       return {
         ...state,
-        message: action.message
-      };
-
-    case actionTypes.DELETE:
-      return {
-        ...state,
-        message: action.message
+        message: ''
       };
 
     default:
